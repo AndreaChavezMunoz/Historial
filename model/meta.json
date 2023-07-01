@@ -1,0 +1,31 @@
+{
+  "lang":"es",
+  "name":"pipeline",
+  "version":"0.0.0",
+  "spacy_version":">=3.5.4,<3.6.0",
+  "description":"",
+  "author":"",
+  "email":"",
+  "url":"",
+  "license":"",
+  "spacy_git_version":"7a2833bf2",
+  "vectors":{
+    "width":500,
+    "vectors":13341,
+    "keys":13341,
+    "name":"es_pipeline.vectors",
+    "mode":"default"
+  },
+  "labels":{
+
+  },
+  "pipeline":[
+
+  ],
+  "components":[
+
+  ],
+  "disabled":[
+
+  ]
+}
