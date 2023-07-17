@@ -4,11 +4,24 @@ import pandas as pd
 from io import BytesIO
 from pyxlsb import open_workbook as open_xlsb
 import streamlit as st
-from actualizar_datos import run
+import buscar_productos as bp
 import  streamlit_toggle as tog
+import streamlit as st
+from google.oauth2 import service_account
+from gsheetsdb import connect
 
-@st.cache_data
-def convert_df(df):
+
+# Create a connection object.
+credentials = service_account.Credentials.from_service_account_info(
+    st.secrets["gcp_service_account"],
+    scopes=[
+        "https://www.googleapis.com/auth/spreadsheets",
+        'https://www.googleapis.com/auth/drive'
+    ],
+)
+
+# Transform to xlswriter
+def convert_to_df(df):
     output = BytesIO()
     writer = pd.ExcelWriter(output, engine='xlsxwriter')
     df.to_excel(writer, index=False, sheet_name='Sheet1')
@@ -18,8 +31,8 @@ def convert_df(df):
     worksheet.set_column('A:A', None, format1)  
     writer.close()
     processed_data = output.getvalue()
-    return processed_data
 
+    return processed_data
 
 st.title("Busqueda rapida de historial")
 toggle = tog.st_toggle_switch(label="Modo", 
@@ -34,7 +47,7 @@ toggle = tog.st_toggle_switch(label="Modo",
 if toggle:
     st.header(':mailbox: Actualizar base de datos')
     # Boton para actualizar datos 
-    credentials = st.file_uploader("Ingresa tus credenciales")
+    _ = st.file_uploader("Ingresa tus credenciales")
 
     if credentials is not None:
         run(credentials)

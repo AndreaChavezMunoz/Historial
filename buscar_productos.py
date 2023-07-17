@@ -4,10 +4,13 @@ from _general import clean_text
 import pandas as pd
 from annoy import AnnoyIndex
 import json
-
-# BUSCAR N NUMERO DE PRODUCTOS MAS PARECIDOS
+from cryptography.fernet import Fernet
 
 def serach_product(word):
+    """ 
+    Takes: str
+    Returns: list of tuples (TRAZA, nombre de producto)
+    """
     # Load model
     nlp = spacy.load("./model")
 
@@ -15,23 +18,56 @@ def serach_product(word):
     annoy_index = AnnoyIndex(500, 'euclidean')
     annoy_index.load('./data/product_index.ann')
     
-    # Make search into vector
+    # Find vector of word based in spacy model
     word = clean_text(word,lowerCase=True,unidecodeStandard=True,skipStopWords=True)
     search_doc = nlp(word)
     search_vector = search_doc.vector
 
-    # Search in index
+    # Search in index the 10 closest points to the vector found
     res = annoy_index.get_nns_by_vector(search_vector, 10)
 
-    # Get values from reference map
+    # Get the word that is represented by each of the vectors found
+    # Get values from reference map (TRAZA, nombre de producto)
     with open("./data/reference_map.json", "r", encoding="utf-8") as f:
         reference = json.load(f)
 
     productos = []
     for ix in res:
-        productos.append(reference[str(ix)])
+        p = reference[str(ix)]
+        productos.append(p)
+
+
 
     return productos
+        
+
+# Load past data
+def open_productos_cotizados():
+    # Load encrypted data
+    with open('./data/filekey.key', 'rb') as filekey:
+        encrypt_key = filekey.read()
+
+    # Create decoder
+    f = Fernet(encrypt_key)
+
+    token = pd.read_csv('./data/productos.csv') 
+    token = token.applymap(lambda x: bytes(x[2:-1],'utf-8'))
+    token  = token.applymap(lambda x: f.decrypt(x))
+    token = token.applymap(lambda x: x.decode('utf-8'))
+
+    columns = list(token.columns.values)
+    columns = map(lambda x: bytes(x[2:-1],'utf-8'),columns)
+    columns = map(lambda x: f.decrypt(x), columns)
+    columns = map(lambda x: x.decode('utf-8'), columns)
+
+
+    token.columns = columns
+    productos_cotizados = token
+    productos_cotizados.set_index('TRAZA',inplace=True)
+
+    return productos_cotizados
+    
+
 
 # BUSCAR PRODUCTOS IMPORTADOS CON PLANILLA 
 def to_str(x):
@@ -41,10 +77,7 @@ def to_str(x):
     else:
         return x
     
-def search_file(path):
-
-    # Cargar base de datos de productos
-    productos_cotizados = pd.read_csv("./data/productos_cotizados.csv", index_col=15)
+def search_file(path, productos_cotizados):
 
     # Leer datos subidos por usuario
     planilla = pd.read_excel(path, index_col= None)
@@ -62,7 +95,8 @@ def search_file(path):
         
         # Get all trazas
         trazas = []
-        for traza, _ in productos_similares:
+        for (traza, _) in productos_similares:
+            
             trazas.append(str(traza))
         
         # Find products from FIGsac database
@@ -83,12 +117,12 @@ def search_file(path):
 
     # Copy only necessary data to return
     resultado = pd.DataFrame()
-    resultado["Nombre de producto Solicitado"] = todos_productos_similares["Nombre de producto Solicitado"]
-    resultado["Producto Ofrecido"] = todos_productos_similares["Producto Ofrecido"]
     resultado["Cotizacion"] = todos_productos_similares["Cotizacion"]
     resultado["Producto Solicitado"] = todos_productos_similares["Producto Solicitado"]
+    resultado["Nombre de producto Solicitado"] = todos_productos_similares["Nombre de producto Solicitado"]
     resultado["U. Medida solicitada"] = todos_productos_similares["U. Medida solicitada"]
     resultado["Cantidad Solicitada"] = todos_productos_similares["Cantidad Solicitada"]
+    resultado["Producto Ofrecido"] = todos_productos_similares["Producto Ofrecido"]
     resultado["U. Medida"] = todos_productos_similares["U. Medida"]
     resultado["Cantidad"] = todos_productos_similares["Cantidad"]
     resultado["Costo x Unidad"] = todos_productos_similares["Costo x Unidad"]
@@ -96,5 +130,4 @@ def search_file(path):
     resultado["Cotizacion"] = todos_productos_similares["Cotizacion"]
     resultado["Observaciones"] = todos_productos_similares["Observaciones"]  
 
-    return resultado
-            
+    return resultado     

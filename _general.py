@@ -3,7 +3,8 @@
 import json 
 import string
 from unidecode import unidecode
-import pickle
+import pandas as pd
+from io import BytesIO
 
 def load_data(file):
     """
@@ -14,6 +15,7 @@ def load_data(file):
     with open(file, "r", encoding="utf-8") as f:
         data = json.load(f)
     return (data)
+
 
 def clean_text(textInput, lowerCase = False, unidecodeStandard = False, skipStopWords = False):
     """
@@ -54,3 +56,4 @@ def clean_text(textInput, lowerCase = False, unidecodeStandard = False, skipStop
     textInput=textInput.strip()
 
     return textInput
+

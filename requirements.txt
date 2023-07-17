@@ -32,6 +32,7 @@ google-auth==2.21.0
 google-auth-httplib2==0.1.0
 google-auth-oauthlib==1.0.0
 googleapis-common-protos==1.59.1
+gsheetsdb==0.1.13.1
 httplib2==0.22.0
 idna==3.4
 importlib-metadata==6.7.0
@@ -49,6 +50,12 @@ MarkupSafe==2.1.3
 matplotlib-inline==0.1.6
 mdurl==0.1.2
 mistune==3.0.1
+mo-dots==4.22.21108
+mo-future==3.147.20327
+mo-imports==3.149.20327
+mo-kwargs==4.22.21108
+mo-logs==4.23.21108
+moz-sql-parser==4.40.21126
 murmurhash==1.0.9
 nbclient==0.8.0
 nbconvert==7.6.0
