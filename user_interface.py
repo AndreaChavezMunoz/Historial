@@ -32,7 +32,7 @@ def convert_to_df(df):
 
 st.title(":mag_right: Busqueda rapida de historial")
 last_update = last_update()
-st.caption(f"Ultima actialización en {last_update}")
+st.caption(f"Última actialización en {last_update}")
 
 url = "https://docs.google.com/presentation/d/e/2PACX-1vRxIH1g79XGMuPjjbGYqschgNEZjBJwznruzzvwNypR_HGJvzDyt2QEOKcAn5UI98Jt6RqotL2vTXyv/pub?start=false&loop=false&delayms=5000"
 st.write("Mira el tutorial [aquí](%s)" % url)
