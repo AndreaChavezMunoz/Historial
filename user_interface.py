@@ -31,7 +31,8 @@ def convert_to_df(df):
 
 st.title(":mag_right: Busqueda rapida de historial")
 
-
+url = "https://docs.google.com/presentation/d/e/2PACX-1vRxIH1g79XGMuPjjbGYqschgNEZjBJwznruzzvwNypR_HGJvzDyt2QEOKcAn5UI98Jt6RqotL2vTXyv/pub?start=false&loop=false&delayms=5000"
+st.write("Mira el tutorial aqui [aqui](%s)" % url)
 
 # Buscar datos
 file_path = st.file_uploader("Sube los datos de planilla", ['xlsx','xls'])
