@@ -2,18 +2,19 @@ import streamlit as st
 from buscar_productos import  search_file, open_productos_cotizados
 import pandas as pd
 from io import BytesIO
-from pyxlsb import open_workbook as open_xlsb
 import streamlit as st
-import  streamlit_toggle as tog
 import streamlit as st
-from google.oauth2 import service_account
-from gsheetsdb import connect
-from datetime import date
+from _general import load_data
 
 @st.cache_data
 def leer_base_de_datos():
     df = open_productos_cotizados()
     return df
+
+@st.cache_data
+def last_update():
+    time = load_data("./data/time_stamp.json")
+    return time
 
 # Transform to xlswriter
 def convert_to_df(df):
@@ -30,6 +31,8 @@ def convert_to_df(df):
     return processed_data
 
 st.title(":mag_right: Busqueda rapida de historial")
+last_update = last_update()
+st.caption(f"Ultima actialización en {last_update}")
 
 url = "https://docs.google.com/presentation/d/e/2PACX-1vRxIH1g79XGMuPjjbGYqschgNEZjBJwznruzzvwNypR_HGJvzDyt2QEOKcAn5UI98Jt6RqotL2vTXyv/pub?start=false&loop=false&delayms=5000"
 st.write("Mira el tutorial [aquí](%s)" % url)
